@@ -17,6 +17,31 @@ site='http://www.mangapanda.com/'
 chapter=1
 page=0
 
+class WebResponse(object):
+	def __init__(self,url):
+		self.url=url
+
+		response=urllib2.urlopen(url)
+		self.page=response.read()
+
+	def get_image(self):
+		"""
+			Function to scrape image from URL and return response
+		"""
+		page=bs4.BeautifulSoup(self.page)
+		url=page.body.img['src']
+		return WebResponse(url)
+	
+	def save_image(self,name):
+		"""
+			Function to save image.
+		"""
+		page=self.get_image()
+		new_name= str(name)+'.jpg'
+		f=open(new_name,'wb')
+		f.write(self.page)
+		
+	
 
 def main_function():
 	if not os.path.exists(manga_name):
@@ -34,15 +59,10 @@ def main_function():
 			if page != 0:
 				download_url=download_url + str(page) + '/'
 
-			try:
-				web_page=urllib2.urlopen(download_url)
-			except urllib2.HTTPError:
-				if flag is 0:
-					end_flag=True
-				break
-
+			response=WebResponse(url)
+			
 			print "For Chapter %d:\n" %(chapter)
-			Download( web_page.read() , page)
+			Download( response , page)
 			page=page+1
 
 		if end_flag:
@@ -51,30 +71,3 @@ def main_function():
 	
 	os.chdir('..')
 	print "Whole manga Downloaded\n"
-
-
-
-
-def extractURL(text):
-	"""
-		Function to scrape the image url from the web page
-	"""
-	page=bs4.BeautifulSoup(text)
-	img_url=page.body.img['src']
-	return img_url
-
-
-def Download(text,page):
-	"""
-		Function to Download the image and save it in the form of page.jpg
-		To Be Added: Detect the format of image.
-	"""
-	
-	img_url=extractURL(text)
-	response=urllib2.urlopen(img_url)
-
-	new_name=str(page)+'.jpg'
-	f=open(new_name,'wb')
-	f.write( response.read() )
-	print "\t Page %d downloaded...\n" %(page)
-
