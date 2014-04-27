@@ -11,9 +11,17 @@ import os
 import urllib2
 import bs4
 
-manga_name='Naruto'
-site='http://www.mangapanda.com/'
+# ------ Code to Handle Proxy:
 
+proxy_url='proxy.iiit.ac.in:8080'
+
+proxy=urllib2.ProxyHandler({ 'http':proxy_url })
+opener=urllib2.build_opener(proxy)
+urllib2.install_opener(opener)	
+
+
+site='http://www.mangapanda.com/'
+manga_name='Naruto'
 chapter=1
 page=0
 
@@ -21,8 +29,12 @@ class WebResponse(object):
 	def __init__(self,url):
 		self.url=url
 
-		response=urllib2.urlopen(url)
-		self.page=response.read()
+		try:
+			response=urllib2.urlopen(url)
+		except urllib2.HTTPError:
+			print 'error'
+		else:
+			self.page=response.read()
 
 	def get_image(self):
 		"""
@@ -58,11 +70,10 @@ def main_function():
 			download_url=site + str(chapter) + '/' 
 			if page != 0:
 				download_url=download_url + str(page) + '/'
+				page=page+1
 
 			response=WebResponse(url)
-			
-			print "For Chapter %d:\n" %(chapter)
-			Download( response , page)
+			response.save_image(page)				
 			page=page+1
 
 		if end_flag:
