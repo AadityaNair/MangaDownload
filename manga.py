@@ -13,8 +13,8 @@ import bs4
 
 # ------ Code to Handle Proxy:
 
-proxy_url='proxy.iiit.ac.in:8080'
-
+#proxy_url='proxy.iiit.ac.in:8080'
+proxy_url=''
 proxy=urllib2.ProxyHandler({ 'http':proxy_url })
 opener=urllib2.build_opener(proxy)
 urllib2.install_opener(opener)	
@@ -68,7 +68,7 @@ def main_function():
 
 		while True:
 			download_url=site + str(chapter) + '/' 
-			if page != 0:
+			if page != 1:
 				download_url=download_url + str(page) + '/'
 				page=page+1
 
@@ -82,3 +82,15 @@ def main_function():
 	
 	os.chdir('..')
 	print "Whole manga Downloaded\n"
+
+
+
+def get_number_of_pages(soup):
+	l=soup.body.find(id='pageMenu').children
+
+	for opt in l:
+		try:
+			page_count=int(opt.string)
+		except ValueError:
+			pass
+	return page
