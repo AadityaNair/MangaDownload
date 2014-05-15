@@ -21,13 +21,12 @@ urllib2.install_opener(opener)
 '''
 
 site='http://www.mangapanda.com/'
-manga_name='Naruto'
-chapter=1
-page=0
+manga_name='naruto'
 
 class WebResponse(object):
 	def __init__(self,url):
 		self.url=url
+		self.page=''
 
 		try:
 			response=urllib2.urlopen(url)
@@ -52,7 +51,6 @@ class WebResponse(object):
 		new_name= str(name)+'.jpg'
 		f=open(new_name,'wb')
 		f.write(self.page)
-		
 	
 
 def main_function():
@@ -69,15 +67,14 @@ def main_function():
 		os.chdir( str(chapter) )
 
 		download_url= site + manga_name + '/' + str(chapter) + '/'
-		nop=get_number_of_pages(WebResponse(download_url))
+		obj=WebResponse(download_url)
+		nop=get_number_of_pages(obj.page)
+		obj.save_image('1')
 
-		for page in range(1,nop+1):
-			if page is 1:
-				site=download_url
-			else:
-				site=download_url + str(page) +'/'
+		for page in range(2,nop+1):
+			url=download_url + str(page) +'/'
 			
-			obj=WebResponse(site)
+			obj=WebResponse(url)
 			obj.save_image( str(page) )
 			print "Chapter: %d\tPage: %d\tDownloaded."
 
@@ -90,7 +87,7 @@ def main_function():
 
 
 def get_number_of_pages(response):
-	soup=bs4.BeautifulSoup(response.page)
+	soup=bs4.BeautifulSoup(response)
 	
 	l=soup.body.find(id='pageMenu').children
 	page_count=len(list(l))/2
@@ -104,5 +101,5 @@ def get_number_of_chapters(response):
 	chapter_count=len(list(l))
 	return chapter_count
 
-if __name__ is '__main__':
+if __name__=='__main__':
 	main_function()
