@@ -87,16 +87,7 @@ def main_function():
 
 def get_number_of_pages(soup):
 	l=soup.body.find(id='pageMenu').children
-	
-	#	faster but may not be in general case
-	#	pagecount=len(list(l))/2
-	for opt in l:
-		try:
-			page_count=int(opt.string)
-		except ValueError:
-			pass
-	return page_count
-
+	pagecount=len(list(l))/2
 
 def get_number_of_chapters(soup):
 	l=soup.body.find(id='chapterMenu').children
