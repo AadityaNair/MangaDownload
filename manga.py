@@ -22,6 +22,9 @@ urllib2.install_opener(opener)
 
 site='http://www.mangapanda.com/'
 manga_name='naruto'
+target_location="/home/aaditya/" # should be accepted as command line arg
+final_chapter=676
+chapter_list_location='http://www.mangapanda.com/93/naruto.html'
 
 class WebResponse(object):
 	def __init__(self,url):
@@ -57,14 +60,16 @@ def main_function():
 	if not os.path.exists(manga_name):
 		os.mkdir(manga_name)
 	os.chdir(manga_name)
-
-
-	for chapter in range(1,4):
-		if os.path.exists( str(chapter) ):
+	
+	name_gen=get_chapters()
+	
+	for chapter in range( 1 , final_chapter ):
+		chapter_name=name_gen.next()
+		if os.path.exists( chapter_name ):
 			continue
 		else:
-			os.mkdir( str(chapter) )
-		os.chdir( str(chapter) )
+			os.mkdir( chapter_name )
+		os.chdir( chapter_name )
 
 		download_url= site + manga_name + '/' + str(chapter) + '/'
 		obj=WebResponse(download_url)
@@ -93,12 +98,23 @@ def get_number_of_pages(response):
 	return page_count 
 
 
-def get_number_of_chapters(response):
+def get_chapters():
+	response=WebResponse( chapter_list_loaction )
 	soup=bs4.BeautifulSoup(response.page)
-	
-	l=soup.body.find(id='chapterMenu').children
-	chapter_count=len(list(l))
-	return chapter_count
+	l=soup.body.find_all('tr')
+	length=len(l)
+	for i in range(length):
+		try:
+			name= l[12+i].a.string + l[12+i].td.contents[4]
+		except IndexError:
+		 	break
+		yield name
+
 
 if __name__=='__main__':
+	current_location=os.path.abspath( os.curdir )
+	os.chdir( target_location )
+	
 	main_function()
+	os.chdir( current_location )
+
