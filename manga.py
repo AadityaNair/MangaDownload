@@ -69,14 +69,13 @@ def main_function():
 		download_url= site + manga_name + '/' + str(chapter) + '/'
 		obj=WebResponse(download_url)
 		nop=get_number_of_pages(obj.page)
-		obj.save_image('1')
 
-		for page in range(2,nop+1):
-			url=download_url + str(page) +'/'
+		for page in range(1,nop+1):
+			url=download_url + str(page)
 			
 			obj=WebResponse(url)
 			obj.save_image( str(page) )
-			print "Chapter: %d\tPage: %d\tDownloaded."
+			print "Chapter: %d\tPage: %d\tDownloaded." %(chapter,page)
 
 
 		os.chdir('..')
