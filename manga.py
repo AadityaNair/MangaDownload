@@ -47,10 +47,10 @@ class WebResponse(object):
 		"""
 			Function to save image.
 		"""
-		page=self.get_image()
+		image=self.get_image()
 		new_name= str(name)+'.jpg'
 		f=open(new_name,'wb')
-		f.write(self.page)
+		f.write(image.page)
 	
 
 def main_function():
