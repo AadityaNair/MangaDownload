@@ -7,24 +7,28 @@
 	Requires BeautifulSoup4
 """
 
-import os
-import urllib2
-import bs4
+site='http://www.mangapanda.com/'
+manga_name='naruto'
+target_location="/home/aaditya/" 
 
-'''# ------ Code to Handle Proxy:
-
-#proxy_url='proxy.iiit.ac.in:8080'
+final_chapter=676
+chapter_list_location='http://www.mangapanda.com/93/naruto.html'
 proxy_url=''
+
+import os, urllib2
+
+try:
+	import bs4
+except ImportError:
+	print "Please Install BeautifulSoup4 and try again"
+	exit(-1)
+
+
+# ------ Code to Handle Proxy:
+
 proxy=urllib2.ProxyHandler({ 'http':proxy_url })
 opener=urllib2.build_opener(proxy)
 urllib2.install_opener(opener)	
-'''
-
-site='http://www.mangapanda.com/'
-manga_name='naruto'
-target_location="/home/aaditya/" # should be accepted as command line arg
-final_chapter=676
-chapter_list_location='http://www.mangapanda.com/93/naruto.html'
 
 class WebResponse(object):
 	def __init__(self,url):
@@ -99,7 +103,7 @@ def get_number_of_pages(response):
 
 
 def get_chapters():
-	response=WebResponse( chapter_list_loaction )
+	response=WebResponse( chapter_list_location )
 	soup=bs4.BeautifulSoup(response.page)
 	l=soup.body.find_all('tr')
 	length=len(l)
@@ -117,4 +121,3 @@ if __name__=='__main__':
 	
 	main_function()
 	os.chdir( current_location )
-
