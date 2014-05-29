@@ -4,20 +4,26 @@ except ImportError:
 	print "Please Install BeautifulSoup4 and try again"
 	exit(-1)
 
-
-proxy=urllib2.ProxyHandler({ 'http':proxy_url })
-opener=urllib2.build_opener(proxy)
-urllib2.install_opener(opener)	
+if proxy_url is not None:
+	proxy=urllib2.ProxyHandler({ 'http':proxy_url })
+	opener=urllib2.build_opener(proxy)
+	urllib2.install_opener(opener)	
 	
 class WebResponse(object):
 	def __init__(self,url):
 		self.url=url
 		self.page=''
+		self.ErrorCode=0
 
 		try:
-			response=urllib2.urlopen(url)
-		except urllib2.HTTPError:
-			print 'error'
+			response=urllib2.urlopen(url,timeout=10)
+		except urllib2.URLError:
+			print "Network Unreachable.Check your internet connection and try again."
+			print "If you access internet thru a proxy, supply it by a command line argument"
+			exit(-1)
+		except urllib2.socket.timeout:
+			print 'Internet Connection too slow.Aborting page download.'
+			self.ErrorCode=-1
 		else:
 			self.page=response.read()
 
@@ -37,6 +43,7 @@ class WebResponse(object):
 		new_name= str(name)+'.jpg'
 		f=open(new_name,'wb')
 		f.write(image.page)
+		f.close()
 
 def get_number_of_pages(response):
 	soup=bs4.BeautifulSoup(response)

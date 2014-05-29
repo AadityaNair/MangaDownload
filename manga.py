@@ -12,9 +12,10 @@ __builtins__.manga_name='naruto'
 __builtins__.target_location="/home/aaditya/" 
 
 __builtins__.chapter_list_location='http://www.mangapanda.com/93/naruto.html'
-__builtins__.proxy_url=''
+__builtins__.proxy_url=None
 
-import os,requisites
+import os, sys
+import requisites
 
 def main_function():
 	if not os.path.exists(manga_name):
@@ -29,7 +30,6 @@ def main_function():
 		if not os.path.exists( chapter_name ):
 			os.mkdir( chapter_name )
 		os.chdir( chapter_name )
-		
 		
 		download_url= site + manga_name + '/' + str(chapter) + '/'
 		obj=requisites.WebResponse(download_url)
@@ -53,6 +53,9 @@ def main_function():
 
 
 if __name__=='__main__':
+	if len(sys.argv)==2:
+		proxy_url=sys.argv[1]
+	
 	current_location=os.path.abspath( os.curdir )
 	os.chdir( target_location )
 	
