@@ -4,6 +4,11 @@ except ImportError:
 	print "Please Install BeautifulSoup4 and try again"
 	exit(-1)
 
+
+proxy=urllib2.ProxyHandler({ 'http':proxy_url })
+opener=urllib2.build_opener(proxy)
+urllib2.install_opener(opener)	
+	
 class WebResponse(object):
 	def __init__(self,url):
 		self.url=url

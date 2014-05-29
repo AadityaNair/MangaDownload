@@ -7,29 +7,22 @@
 	Requires BeautifulSoup4
 """
 
-site='http://www.mangapanda.com/'
-manga_name='naruto'
-target_location="/home/aaditya/" 
+__builtins__.site='http://www.mangapanda.com/'
+__builtins__.manga_name='naruto'
+__builtins__.target_location="/home/aaditya/" 
 
-final_chapter=676
-chapter_list_location='http://www.mangapanda.com/93/naruto.html'
-proxy_url=''
+__builtins__.final_chapter=676
+__builtins__.chapter_list_location='http://www.mangapanda.com/93/naruto.html'
+__builtins__.proxy_url=''
 
-import os
-
-# ------ Code to Handle Proxy:
-
-proxy=urllib2.ProxyHandler({ 'http':proxy_url })
-opener=urllib2.build_opener(proxy)
-urllib2.install_opener(opener)	
-
+import os,requisites
 
 def main_function():
 	if not os.path.exists(manga_name):
 		os.mkdir(manga_name)
 	os.chdir(manga_name)
 	
-	name_gen=get_chapters()
+	name_gen=requisites.get_chapters()
 	
 	for chapter in range( 1 , final_chapter ):
 		chapter_name=name_gen.next()
@@ -40,13 +33,13 @@ def main_function():
 		os.chdir( chapter_name )
 
 		download_url= site + manga_name + '/' + str(chapter) + '/'
-		obj=WebResponse(download_url)
+		obj=requisites.WebResponse(download_url)
 		nop=get_number_of_pages(obj.page)
 
 		for page in range(1,nop+1):
 			url=download_url + str(page)
 			
-			obj=WebResponse(url)
+			obj=requisites.WebResponse(url)
 			obj.save_image( str(page) )
 			print "Chapter: %d\tPage: %d\tDownloaded." %(chapter,page)
 
