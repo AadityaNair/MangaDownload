@@ -51,11 +51,11 @@ def get_chapters():
 	soup=bs4.BeautifulSoup(response.page)
 	l=soup.body.find_all('tr')
 	length=len(l)
+	return_list=[]
 	for i in range(length):
 		try:
 			name= l[12+i].a.string + l[12+i].td.contents[4]
 		except IndexError:
 		 	break
-		yield name
-
-
+		return_list.push(name)
+	return return_list
