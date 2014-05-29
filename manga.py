@@ -11,7 +11,6 @@ __builtins__.site='http://www.mangapanda.com/'
 __builtins__.manga_name='naruto'
 __builtins__.target_location="/home/aaditya/" 
 
-__builtins__.final_chapter=676
 __builtins__.chapter_list_location='http://www.mangapanda.com/93/naruto.html'
 __builtins__.proxy_url=''
 
@@ -22,23 +21,25 @@ def main_function():
 		os.mkdir(manga_name)
 	os.chdir(manga_name)
 	
-	name_gen=requisites.get_chapters()
+	name_list=requisites.get_chapters()
+	chapter=0
 	
-	for chapter in range( 1 , final_chapter ):
-		chapter_name=name_gen.next()
-		if os.path.exists( chapter_name ):
-			continue
-		else:
+	for chapter_name in name_list:
+		chapter=chapter+1	
+		if not os.path.exists( chapter_name ):
 			os.mkdir( chapter_name )
 		os.chdir( chapter_name )
-
+		
+		
 		download_url= site + manga_name + '/' + str(chapter) + '/'
 		obj=requisites.WebResponse(download_url)
 		nop=get_number_of_pages(obj.page)
 
 		for page in range(1,nop+1):
-			url=download_url + str(page)
+			if os.path.isfile( str( page ) + '.jpg' ):
+				continue
 			
+			url=download_url + str(page)
 			obj=requisites.WebResponse(url)
 			obj.save_image( str(page) )
 			print "Chapter: %d\tPage: %d\tDownloaded." %(chapter,page)
@@ -47,7 +48,7 @@ def main_function():
 		os.chdir('..')
 	
 	os.chdir('..')
-	print "Whole manga Downloaded\n"
+	print "Whole manga Downloaded"
 
 
 
