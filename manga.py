@@ -8,8 +8,8 @@
 """
 
 __builtins__.Data={
-        'site'            : 'http://www.mangapanda.com/',
-        'manga_name'      : 'Naruto',
+        'site'            : 'http://www.mangapanda.com',
+        'manga_name'      : 'bleach',
         'target_location' : '/home/aaditya',
         'proxy_url'       : None,
         'chapter_range'   : {
@@ -17,8 +17,6 @@ __builtins__.Data={
                                 'end'   : 600
                             }
         }
-__builtins__.chapter_list_location='http://www.mangapanda.com/93/naruto.html'
-
 import os, sys
 import requisites
 
@@ -37,9 +35,9 @@ def main_function():
             os.mkdir( chapter_name )
         os.chdir( chapter_name )
 
-        download_url= Data['site'] + manga_name + '/' + str(chapter) + '/'
+        download_url= Data['site'] + '/' + Data['manga_name'] + '/' + str(chapter) + '/'
         obj=requisites.WebResponse(download_url)
-        nop=get_number_of_pages(obj.page)
+        nop=requisites.get_number_of_pages(obj.page)
 
         print chapter_name
         for page in range(1,nop+1):
@@ -49,7 +47,7 @@ def main_function():
             url=download_url + str(page)
             obj=requisites.WebResponse(url)
             obj.save_image( str(page) )
-            print "\tPage: %d\tDownloaded." %(chapter,page)
+            print "\tPage: %d\tDownloaded." %(page)
 
         chapter=chapter+1	
         os.chdir('..')
@@ -64,7 +62,7 @@ if __name__=='__main__':
         proxy_url=sys.argv[1]
 
     current_location=os.path.abspath( os.curdir )
-    os.chdir( target_location )
+    os.chdir( Data['target_location'] )
 
     main_function()
     os.chdir( current_location )
