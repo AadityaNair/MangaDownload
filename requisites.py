@@ -58,16 +58,28 @@ def get_number_of_pages(response):
     return page_count 
 
 
-def get_chapters():
+def get_chapters( chapter_range ):
     response=WebResponse( chapter_list_location )
     soup=BeautifulSoup(response.page)
     l=soup.body.find_all('tr')
-    length=len(l)
     return_list=[]
-    for i in range(length):
+    
+    if len(chapter_range)==0:
+        begin=1
+        end=len(l)
+    elif len(chapter_range)==1:
+        begin=chapter_range['begin']
+        end=len(l)
+    else:
+        begin=chapter_range['begin']
+        end=chapter_range['end']
+        
+    
+    while chapter >= begin and chapter <= end:
         try:
-            name= l[12+i].a.string + l[12+i].td.contents[4]
+            name= l[ 11+chapter ].a.string + l[ 11+chapter ].td.contents[4]
         except IndexError:
             break
         return_list.push(name)
+        chapter=chapter+1
     return return_list

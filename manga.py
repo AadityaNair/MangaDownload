@@ -11,23 +11,28 @@ __builtins__.Data={
         'site'            : 'http://www.mangapanda.com/',
         'manga_name'      : 'Naruto',
         'target_location' : '/home/aaditya',
-        'proxy_url'       : None
+        'proxy_url'       : None,
+        'chapter_range'   : {
+                                'begin' : 1,
+                                'end'   : 600
+                            }
         }
 __builtins__.chapter_list_location='http://www.mangapanda.com/93/naruto.html'
 
 import os, sys
 import requisites
 
+
+
 def main_function():
     if not os.path.exists( Data['manga_name'] ):
         os.mkdir( Data['manga_name'] )
     os.chdir( Data['manga_name'] )
 
-    name_list=requisites.get_chapters()
-    chapter=0
+    name_list=requisites.get_chapters( Data['chapter_range'] )
+    chapter=Data['chapter_range']['begin']
 
     for chapter_name in name_list:
-        chapter=chapter+1	
         if not os.path.exists( chapter_name ):
             os.mkdir( chapter_name )
         os.chdir( chapter_name )
@@ -46,7 +51,7 @@ def main_function():
             obj.save_image( str(page) )
             print "\tPage: %d\tDownloaded." %(chapter,page)
 
-
+        chapter=chapter+1	
         os.chdir('..')
 
     os.chdir('..')
