@@ -9,15 +9,11 @@
 
 __builtins__.Data={
         'site'            : 'http://www.mangapanda.com',
-        'manga_name'      : 'bleach',
-        'target_location' : '/home/aaditya',
-        'proxy_url'       : None,
-        'chapter_range'   : {
-                                'begin' : 1,
-                                'end'   : 600
-                            }
+        'manga_name'      : None,
+        'target_location' : '.',
+        'chapter_range'   : {}
         }
-import os, sys
+import os, sys, argparse 
 import requisites
 
 
@@ -55,14 +51,50 @@ def main_function():
     os.chdir('..')
     print "Whole manga Downloaded"
 
+def parse_arguments():
+    parser=argparse.ArgumentParser()
+
+    parser.add_argument('manga_name',
+                        type=str,
+                        help="Input the name of the manga."
+                        )
+    parser.add_argument('-b','--begin',
+                        type=int,
+                        help='Input the starting chapter.Defaults to first chapter.'
+                        )
+    parser.add_argument('-e','--end',
+                        type=int,
+                        help='Input the ending chapter.Defaults to the last possible chapter.'
+                        )
+    parser.add_argument('-c','--chapter',
+                        type=int,
+                        help='Provide if you want to download only one chapter.'
+                        )
+    parser.add_argument('-t','--target',
+                        type=str,
+                        help='The location where manga has to be downloaded.Defaults to the current directory.',
+                        default='.'
+                        )
+    args=parser.parse_args()
+    if args.chapter and (args.begin or args.end):
+        print '--chapter cannot be specified with --begin/--end. \n'
+        parser.parse_args('--help'.split())
+    else:
+        Data['manga_name']=args.manga_name
+        Data['target_location']=args.target
+        if args.chapter:
+            Data['chapter_range']['begin']=Data['chapter_range']['end']=args.chapter
+        else:
+            Data['chapter_range']['begin']=args.begin
+            Data['chapter_range']['end']=args.end
+    
 
 
 if __name__=='__main__':
-    if len(sys.argv)==2:
-        proxy_url=sys.argv[1]
-
+    parse_arguments()
+    
     current_location=os.path.abspath( os.curdir )
-    os.chdir( Data['target_location'] )
-
+    os.chdir( os.path.abspath( Data['target_location'] ) )
+    
     main_function()
     os.chdir( current_location )

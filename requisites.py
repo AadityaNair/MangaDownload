@@ -8,12 +8,7 @@ except ImportError:
     except ImportError:
         print "Please Install BeautifulSoup4 and try again"
         exit(-1)
-'''
-if Data['proxy_url'] is not None:
-    proxy=urllib2.ProxyHandler({ 'http':Data['proxy_url'] })
-    opener=urllib2.build_opener(proxy)
-    urllib2.install_opener(opener)	
-'''# For Testing only
+        
 class WebResponse(object):
     def __init__(self,url):
         self.url=url
@@ -28,7 +23,7 @@ class WebResponse(object):
             exit(-1)
         except urllib2.socket.timeout:
             print 'Internet Connection too slow.Aborting page download.'
-            self.ErrorCode=-1
+            exit(-1)
         else:
             self.page=response.read()
 
@@ -57,7 +52,6 @@ def get_number_of_pages(response):
     page_count=len(list(l))/2
     return page_count 
 
-
 def get_chapters( chapter_range ):
     chapter_list_location=get_list_location( Data['manga_name'] )
     response=WebResponse( chapter_list_location )
@@ -66,13 +60,13 @@ def get_chapters( chapter_range ):
     l=soup.body.find_all('tr')
     return_list=[]
     
-    begin=chapter=1
+    begin=1
     end=len(l)
     if chapter_range.has_key('begin'):
         begin=chapter_range['begin']
     if chapter_range.has_key('end'):
         end=chapter_range['end']
-        
+    chapter=begin
     
     while chapter >= begin and chapter <= end:
         try:
