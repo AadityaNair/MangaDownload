@@ -6,8 +6,8 @@ Python script to downoad manga from web.It works by scraping images off each man
 Dependencies
 ============
 
-  Python 2.7
-  BeautifulSoup (use pip install BeautifulSoup or pip install BeautifulSoup4 to install)
+ * Python 2.7
+ * BeautifulSoup (use `pip install BeautifulSoup` or `pip install BeautifulSoup4` to install)
 
 Tested on Fedora 20. Should work on any Linux Distribition as long as dependencies are installed.
 
@@ -23,9 +23,15 @@ Usage
 =====
 
 The script works thru command-line options:
-1. python manga.py --help 
+1. ```python
+    python manga.py --help
+   ``` 
    will display all the help related to options available
-2. python manga.py [manga_name]
+2. ```python
+    python manga.py [manga_name]
+   ``` 
    will download the manga 'manga_name' from beginning to end
-3. python manga.py [manga_name] --target TARGET
+3. ```python
+    python manga.py [manga_name] --target TARGET
+   ```
    will download the manga at the location pointed by TARGET
