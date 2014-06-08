@@ -1,4 +1,5 @@
 import urllib2
+from os import walk
 
 try:
     from bs4 import BeautifulSoup
@@ -51,7 +52,19 @@ def get_number_of_pages(response):
     page_count=len(list(l))/2
     return page_count 
 
-def get_chapters( chapter_range ):
+def get_chapters( chapter_range, numeric): 
+    begin=1
+    end=len(l)
+    if chapter_range.has_key('begin'):
+        begin=chapter_range['begin']
+    if chapter_range.has_key('end'):
+        end=chapter_range['end']
+    chapter=begin
+
+    if numeric:
+        return range(begin,end+1)
+
+    
     chapter_list_location=get_list_location( Data['manga_name'] )
     isError=False
     try:
@@ -65,15 +78,6 @@ def get_chapters( chapter_range ):
             soup=BeautifulSoup(response.page)
             l=soup.body.find_all('tr')
             return_list=[]
-
-    begin=1
-    end=len(l)
-    if chapter_range.has_key('begin'):
-        begin=chapter_range['begin']
-    if chapter_range.has_key('end'):
-        end=chapter_range['end']
-    chapter=begin
-    
     if isError:
         print 'Unable to download chapter names.Going with numbers'
         return range(begin,end+1)
@@ -121,3 +125,15 @@ def get_list_location(manga_name):
     else:
         print 'Manga Name does not exist.Check spelling and try again.'
         exit(-3)
+
+def check_numeric_chapters():
+    a=walk('.')
+    b=a.next()
+    chapter_list=b[1]
+
+    for chapter in chapter_list:
+        try:
+            int(chapter)
+        except ValueError:
+            return False
+    return True

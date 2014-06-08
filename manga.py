@@ -13,17 +13,17 @@ __builtins__.Data={
         'target_location' : '.',
         'chapter_range'   : {}
         }
-import os, sys, argparse 
+import os, argparse 
 import requisites
-
-
 
 def main_function():
     if not os.path.exists( Data['manga_name'] ):
         os.mkdir( Data['manga_name'] )
     os.chdir( Data['manga_name'] )
 
-    name_list=requisites.get_chapters( Data['chapter_range'] )
+    isNumeric=requisites.check_numeric_chapters()
+    
+    name_list=requisites.get_chapters( Data['chapter_range'], numeric=isNumeric )
     chapter=Data['chapter_range']['begin']
 
     for chapter_name in name_list:
