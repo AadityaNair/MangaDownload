@@ -25,25 +25,30 @@ Usage
 The script works thru command-line options:
 
 1. This will display all the help related to options available
-    ```sh
+    
+ ```sh
     python manga.py --help
-    ```
+ ```
 2. This will download the manga given by `manga_name` from beginning to end
-    ```sh
+ 
+ ```sh
     python manga.py [manga_name]
-    ``` 
+ ``` 
 3. This will download the manga at location pointed by `TARGET`
-    ```sh
+    
+ ```sh
     python manga.py [manga_name] --target TARGET
-    ```
+ ```
 4. This will download the given manga from chapters `BEGIN` to `END`
-    ```sh
+    
+ ```sh
     python manga.py [manga_name] -b [BEGIN] -e [END]
-    ```
+ ```
   ***Note that if `-b` is not specified, default is taken as the first chapter.***
   ***Similarly if `-e` is omitted, the program downloads till the last chapter.***
 
 5. This will download only one chapter `CHAPTER`
-    ```sh
+    
+ ```sh
     python manga.py [manga_name] -c [CHAPTER]
-    ``` 
+ ``` 
