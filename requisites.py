@@ -15,6 +15,7 @@ class WebResponse(object):
         self.url=url
         self.page=''
         self.ErrorCode=0
+        self.isSaved=False
 
         try:
             response=urllib2.urlopen(url,timeout=10)
@@ -31,19 +32,23 @@ class WebResponse(object):
         """
             Function to scrape image from URL and return response
         """
-        page=BeautifulSoup(self.page)
-        url=page.body.img['src']
-        return WebResponse(url)
+        if not self.ErrorCode:
+            page=BeautifulSoup(self.page)
+            url=page.body.img['src']
+            return WebResponse(url)
 
     def save_image(self,name):
         """
             Function to save image.
         """
         image=self.get_image()
-        new_name= str(name)+'.jpg'
-        f=open(new_name,'wb')
-        f.write(image.page)
-        f.close()
+
+        if not image and not image.ErrorCode:
+            new_name= str(name)+'.jpg'
+            f=open(new_name,'wb')
+            f.write(image.page)
+            f.close()
+            self.isSaved=True
 
 def get_number_of_pages(response):
     soup=BeautifulSoup(response)
@@ -52,9 +57,13 @@ def get_number_of_pages(response):
     page_count=len(list(l))/2
     return page_count 
 
+def InfiniteSequence(begin):
+    while True:
+        yield begin
+        begin+=1
+
 def get_chapters( chapter_range, numeric): 
     begin=1
-    end=len(l)
     if chapter_range.has_key('begin'):
         begin=chapter_range['begin']
     if chapter_range.has_key('end'):
@@ -62,8 +71,10 @@ def get_chapters( chapter_range, numeric):
     chapter=begin
 
     if numeric:
-        return range(begin,end+1)
-
+        if chapter_range.has_key('end'):
+            return range(begin,end+1)
+        else:
+            return InfiniteSequence(begin)
     
     chapter_list_location=get_list_location( Data['manga_name'] )
     isError=False
@@ -77,6 +88,9 @@ def get_chapters( chapter_range, numeric):
         else:
             soup=BeautifulSoup(response.page)
             l=soup.body.find_all('tr')
+            if not chapter_range.has_key('end'):
+                end=len(l)
+
             return_list=[]
     if isError:
         print 'Unable to download chapter names.Going with numbers'
@@ -136,4 +150,4 @@ def check_numeric_chapters():
             int(chapter)
         except ValueError:
             return False
-    return True
+    return True and len(chapter_list)
