@@ -1,7 +1,7 @@
 """
     Code to download manga
 
-    Creator: Aaditya M Nair 
+    Creator: Aaditya M Nair ( a.k.a Prometheus ) 
     Created: 22 April, 2014
 
     Requires BeautifulSoup4

@@ -1,6 +1,6 @@
 import urllib2
-from os import walk
-
+from os import walk as os 
+import csv
 try:
     from bs4 import BeautifulSoup
 except ImportError:
@@ -106,6 +106,10 @@ def get_chapters( chapter_range, numeric):
     return return_list
 
 def get_list_location(manga_name):
+    url=cache_url(get=True)
+    if url:
+        return url
+    
     for i in range(5):
         response=WebResponse("http://www.mangapanda.com/alphabetical")
         if not response.ErrorCode:
@@ -135,13 +139,15 @@ def get_list_location(manga_name):
             break
     if isExist:    
         print 'List Location Discovered.'
-        return Data['site'] +loc.a['href']
+        url=Data['site'] + loc.a['href']
+        cache_url(data=url,get=False)
+        return url
     else:
         print 'Manga Name does not exist.Check spelling and try again.'
         exit(-3)
 
 def check_numeric_chapters():
-    a=walk('.')
+    a=os.walk('.')
     b=a.next()
     chapter_list=b[1]
 
@@ -151,3 +157,13 @@ def check_numeric_chapters():
         except ValueError:
             return False
     return True and len(chapter_list)
+
+def cache_url(URL=None,get):
+    if not os.path.exists('list_location') and get:
+        return False
+    f=open('list_location','w+')
+    if get:
+        return f.read()
+    else:
+        print >> f, URL
+        return True
