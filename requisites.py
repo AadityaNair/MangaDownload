@@ -158,7 +158,7 @@ def check_numeric_chapters():
             return False
     return True and len(chapter_list)
 
-def cache_url(URL=None,get):
+def cache_url(get,URL=None):
     if not os.path.exists('list_location') and get:
         return False
     f=open('list_location','w+')
