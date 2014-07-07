@@ -1,10 +1,11 @@
+# Update main to get_chapters save_image
 """
     Code to download manga
 
     Creator: Aaditya M Nair ( a.k.a Prometheus ) 
     Created: 22 April, 2014
 
-    Requires BeautifulSoup4
+    Requires BeautifulSoup
 """
 #------------------Data Constants--------------------#
 site            = 'http://www.mangapanda.com'
@@ -33,7 +34,7 @@ def main_function():
 
     isNumeric=check_numeric_chapters()
 
-    name_list=get_chapters( chapter_range, numeric=isNumeric )
+    name_list=get_chapters( isNumeric )
     chapter=chapter_range['begin']
     
     for chapter_name in name_list:
@@ -47,7 +48,7 @@ def main_function():
         download_url= site + '/' + manga_name + '/' + str(chapter) + '/'
         print str(chapter_name)
 
-        while page <= nop or not getPages: 
+        while page <= nop or not getPages:
             print '\tPage: %d' %(page), 
             
             if os.path.isfile( str( page ) + '.jpg' ):
@@ -57,16 +58,15 @@ def main_function():
 
             url=download_url + str(page)
             obj=WebResponse(url)
+            isSaved=False
 
             if not getPages and not obj.ErrorCode:
                 nop=get_number_of_pages( obj.page )
                 getPages=True
             if not obj.ErrorCode:
-                obj.save_image( str(page) )
-            else:
-                print "Problem"
+               isSaved= save_image(obj ,str(page) )
                 
-            if obj.isSaved:
+            if isSaved:
                 print "\t Downloaded."
             else:
                 print "\t Unable to Downloaded."
@@ -107,6 +107,8 @@ def parse_arguments():
         print '--chapter cannot be specified with --begin/--end. \n'
         parser.parse_args('--help'.split())
     else:
+        global manga_name,target_location,chapter_name
+        
         manga_name=args.manga_name
         target_location=args.target
         if args.chapter:
@@ -115,16 +117,6 @@ def parse_arguments():
             chapter_range['begin']=args.begin
             chapter_range['end']=args.end
 
-
-
-if __name__=='__main__':
-    parse_arguments()
-
-    current_location=os.path.abspath( os.curdir )
-    os.chdir( os.path.abspath( target_location ) )
-
-    main_function()
-    os.chdir( current_location )
 
 class WebResponse(object):
     def __init__(self,url):
@@ -156,6 +148,8 @@ def save_image(web_page,name):
             f=open(new_name,'wb')
             f.write(image.page)
             f.close()
+            return True
+    return False
 
 #--------------------------------Functions to generate Metadata-------------------------------#
 
@@ -166,53 +160,53 @@ def get_number_of_pages(response):
     page_count=len(list(l))/2
     return page_count 
 
-def get_chapters( chapter_range, numeric): 
+def get_chapters(numeric):
     begin=1
     if chapter_range.has_key('begin'):
         begin=chapter_range['begin']
-    if chapter_range.has_key('end'):
-        end=chapter_range['end']
-    chapter=begin
 
-    if numeric:
+    chapter_list=get_name_list()
+    if chapter_list and not numeric:
+        
+        end=len(chapter_list)
         if chapter_range.has_key('end'):
+            end=chapter_range['end']
+        
+        return chapter_list[begin-1:end]
+    else:
+        if not numeric: 
+            print 'Unable to download chapter names.',
+        print 'Going with numbers'
+
+        if chapter_range.has_key('end'):
+            end=chapter_range['end']
+            
             return range(begin,end+1)
         else:
             return InfiniteSequence(begin)
-    
-    chapter_list_location=get_list_location( Data['manga_name'] )
-    isError=False
-    try:
-        response=WebResponse( chapter_list_location )
-    except ValueError:
-        isError=True
-    else: 
-        if response.ErrorCode:
-            isError=True
-        else:
-            soup=BeautifulSoup(response.page)
-            l=soup.body.find_all('tr')
-            if not chapter_range.has_key('end'):
-                end=len(l)
 
-            return_list=[]
-    if isError:
-        print 'Unable to download chapter names.Going with numbers'
-        return range(begin,end+1)
-    
-    while chapter >= begin and chapter <= end:
-        try:
-            name= l[ 11+chapter ].a.string + l[ 11+chapter ].td.contents[4]
-        except IndexError:
+def get_name_list():
+    chapter_list_location=get_list_location( manga_name )
+
+    for i in range(5):
+        response=WebResponse( chapter_list_location )
+        if not response.ErrorCode:
             break
+        if i==4:
+            return None
+    soup=BeautifulSoup(response.page)
+    l=soup.body.find_all('tr')[12:-1]
+    return_list=[]
+    for element in l:
+        name=element.a.string+element.td.contents[4]
         return_list.append(name)
-        chapter=chapter+1
+    
     return return_list
 
 def get_list_location(manga_name):
-    url=cache_url(get=True)
-    if url is not False:
-        print "Used cached url."
+    url=cache_get()
+    if url:
+        print "Using cached url."
         return url
     
     for i in range(5):
@@ -244,8 +238,8 @@ def get_list_location(manga_name):
             break
     if isExist:    
         print 'List Location Discovered.'
-        url=Data['site'] + loc.a['href']
-        cache_url(URL=url,get=False)
+        url=site + loc.a['href']
+        cache_put(url)
         return url
     else:
         print 'Manga Name does not exist.Check spelling and try again.'
@@ -265,20 +259,28 @@ def check_numeric_chapters():
             return False
     return True and len(chapter_list)
 
-def cache_url(get,URL=None):
-    if not os.path.exists('list_location') and get:
+def cache_get():
+    if not os.path.exists('list_location'):
         return False
-    f=open('list_location','w+')
-    if get:
-        text=f.read()
-        print text
-        return text
-    else:
-        print >> f, URL
-        return True
+    f=open('list_location','r')
+    return f.read()
+
+def cache_put(URL):
+    f=open('list_location','w')
+    print >> f, URL
 
 def InfiniteSequence(begin):
     while True:
         yield begin
         begin+=1
+
+
+if __name__=='__main__':
+    parse_arguments()
+
+    current_location=os.path.abspath( os.curdir )
+    os.chdir( os.path.abspath( target_location ) )
+
+    main_function()
+    os.chdir( current_location )
 
