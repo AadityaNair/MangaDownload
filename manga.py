@@ -42,19 +42,13 @@ def main_function():
             os.mkdir( str(chapter_name) )
         os.chdir( str(chapter_name) )
         getPages=False
-        page=1
-        nop=-1
+        page=nop=1
 
         download_url= site + '/' + manga_name + '/' + str(chapter) + '/'
         print str(chapter_name)
 
         while page <= nop or not getPages:
             print '\tPage: %d' %(page), 
-            
-            if os.path.isfile( str( page ) + '.jpg' ):
-                print "\t Already Downloaded."
-                page=page+1
-                continue
 
             url=download_url + str(page)
             obj=WebResponse(url)
@@ -63,9 +57,15 @@ def main_function():
             if not getPages and not obj.ErrorCode:
                 nop=get_number_of_pages( obj.page )
                 getPages=True
+
+            if os.path.isfile( str( page ) + '.jpg' ):
+                print "\t Already Downloaded."
+                page=page+1
+                continue
+
+
             if not obj.ErrorCode:
                isSaved= save_image(obj ,str(page) )
-                
             if isSaved:
                 print "\t Downloaded."
             else:
@@ -142,7 +142,7 @@ def save_image(web_page,name):
     
         image=WebResponse(url)
         if not image.ErrorCode:
-            extn=url[url.rfind('.')+1:]
+            extn=url[url.rfind('.'):]
             new_name= str(name)+extn
             
             f=open(new_name,'wb')
