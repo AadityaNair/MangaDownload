@@ -1,4 +1,3 @@
-# Update main to get_chapters save_image
 """
     Code to download manga
 
@@ -69,7 +68,7 @@ def main_function():
             if isSaved:
                 print "\t Downloaded."
             else:
-                print "\t Unable to Downloaded."
+                print "\t Unable to Download."
             page=page+1
 
         chapter=chapter+1	
@@ -162,7 +161,7 @@ def get_number_of_pages(response):
 
 def get_chapters(numeric):
     begin=1
-    if chapter_range.has_key('begin'):
+    if chapter_range['begin'] is not None:
         begin=chapter_range['begin']
 
     chapter_list=get_name_list()
@@ -178,7 +177,7 @@ def get_chapters(numeric):
             print 'Unable to download chapter names.',
         print 'Going with numbers'
 
-        if chapter_range.has_key('end'):
+        if chapter_range['end'] is not None:
             end=chapter_range['end']
             
             return range(begin,end+1)
