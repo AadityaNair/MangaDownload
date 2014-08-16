@@ -35,6 +35,8 @@ def main_function():
 
     name_list=get_chapters( isNumeric )
     chapter=chapter_range['begin']
+    if chapter is None:
+        chapter=1
     
     for chapter_name in name_list:
         if not os.path.exists( str(chapter_name) ):
