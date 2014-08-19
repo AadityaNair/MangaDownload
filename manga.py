@@ -234,6 +234,9 @@ def get_list_location(manga_name):
         if target.a.string==manga_name[0].upper():
             break
     for loc in target.find_all('li'):
+        if loc.a.string is None:
+            continue
+
         if loc.a.string.lower()==manga_name.lower():
             isExist=True
             break
