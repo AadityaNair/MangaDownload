@@ -1,4 +1,4 @@
-cd ~/$1
+cd ./$1
 
 for ch_name in *
 do
