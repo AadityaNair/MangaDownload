@@ -37,7 +37,7 @@ def main_function():
     chapter=chapter_range['begin']
     if chapter is None:
         chapter=1
-    
+
     for chapter_name in name_list:
         if not os.path.exists( str(chapter_name) ):
             os.mkdir( str(chapter_name) )
@@ -46,6 +46,11 @@ def main_function():
         page=nop=1
 
         download_url= site + '/' + manga_name + '/' + str(chapter) + '/'
+
+        download_url = download_url.replace(" " , "-").lower()
+
+        print download_url
+
         print str(chapter_name)
 
         while page <= nop or not getPages:
@@ -66,7 +71,7 @@ def main_function():
 
 
             if not obj.ErrorCode:
-               isSaved= save_image(obj ,str(page) )
+                isSaved= save_image(obj ,str(page) )
             if isSaved:
                 print "\t Downloaded."
             else:
@@ -109,7 +114,7 @@ def parse_arguments():
         parser.parse_args('--help'.split())
     else:
         global manga_name,target_location,chapter_name
-        
+
         manga_name=args.manga_name
         target_location=args.target
         if args.chapter:
@@ -140,12 +145,12 @@ def save_image(web_page,name):
     if not web_page.ErrorCode:
         page=BeautifulSoup(web_page.page)
         url=page.body.img['src']
-    
+
         image=WebResponse(url)
         if not image.ErrorCode:
             extn=url[url.rfind('.'):]
             new_name= str(name)+extn
-            
+
             f=open(new_name,'wb')
             f.write(image.page)
             f.close()
@@ -156,6 +161,7 @@ def save_image(web_page,name):
 
 def get_number_of_pages(response):
     soup=BeautifulSoup(response)
+
 
     l=soup.body.find(id='pageMenu').children
     page_count=len(list(l))/2
@@ -168,11 +174,11 @@ def get_chapters(numeric):
 
     chapter_list=get_name_list()
     if chapter_list and not numeric:
-        
+
         end=len(chapter_list)
         if chapter_range.has_key('end'):
             end=chapter_range['end']
-        
+
         return chapter_list[begin-1:end]
     else:
         if not numeric: 
@@ -181,7 +187,7 @@ def get_chapters(numeric):
 
         if chapter_range['end'] is not None:
             end=chapter_range['end']
-            
+
             return range(begin,end+1)
         else:
             return InfiniteSequence(begin)
@@ -201,7 +207,7 @@ def get_name_list():
     for element in l:
         name=element.a.string+element.td.contents[4]
         return_list.append(name)
-    
+
     return return_list
 
 def get_list_location(manga_name):
@@ -209,7 +215,7 @@ def get_list_location(manga_name):
     if url:
         print "Using cached url."
         return url
-    
+
     for i in range(5):
         response=WebResponse("http://www.mangapanda.com/alphabetical")
         if not response.ErrorCode:
