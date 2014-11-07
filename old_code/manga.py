@@ -41,26 +41,22 @@ def main_function():
         chapter=1
 
     for chapter_name in name_list:
-        if not os.path.exists( str(chapter_name) ):
-            os.mkdir( str(chapter_name) )
-        os.chdir( str(chapter_name) )
+        if not os.path.exists( str(chapter_name.encode('utf8')) ):
+            os.mkdir( str(chapter_name.encode('utf8')) )
+        os.chdir( str(chapter_name.encode('utf8')) )
         getPages=False
         page=nop=1
 
         download_url= site + '/' + manga_name + '/' + str(chapter) + '/'
-
         download_url = download_url.replace(" " , "-").lower()
-
-        print download_url
-
-        print str(chapter_name)
+        print str(chapter_name.encode('utf8'))
 
         while page <= nop or not getPages:
             print '\tPage: %d' %(page), 
-
             url=download_url + str(page)
-            obj=WebResponse(url)
-            isSaved=False
+            if not getPages:
+                obj=WebResponse(url)
+                isSaved=False
 
             if not getPages and not obj.ErrorCode:
                 nop=get_number_of_pages( obj.page )
@@ -70,8 +66,9 @@ def main_function():
                 print "\t Already Downloaded."
                 page=page+1
                 continue
-
-
+            
+            obj=WebResponse(url)
+            isSaved=False
             if not obj.ErrorCode:
                 isSaved= save_image(obj ,str(page) )
             if isSaved:
