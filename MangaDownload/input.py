@@ -7,6 +7,7 @@
 """
 
 import argparse
+from . import globals
 
 parser = argparse.ArgumentParser()
 
@@ -36,14 +37,13 @@ if args.chapter and (args.begin or args.end):
     print '--chapter cannot be specified with --begin/--end. \n'
     parser.parse_args('--help'.split())
 else:
-    global manga_name,target_location,chapter_name
-
-    manga_name = args.manga_name
-    target_location = args.target
+# Make all inputs available globally
+    globals.user_details['manga_name'] = args.manga_name
+    globals.user_details['location'] = args.target
     if args.chapter:
-        chapter_range['begin'] = chapter_range['end'] = args.chapter
+        globals.user_details['begin'] = globals.user_details['end'] = args.chapter
     else:
 # Both args.begin and args.end is None if not specified.
-        chapter_range['begin'] = args.begin
-        chapter_range['end'] = args.end
+        globals.user_details['begin'] = args.begin
+        globals.user_details['end'] = args.end
 
