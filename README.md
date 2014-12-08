@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/AadityaNair/MangaDownload.svg?branch=master)](https://travis-ci.org/AadityaNair/MangaDownload)
+
 MangaDownload
 =============
 
