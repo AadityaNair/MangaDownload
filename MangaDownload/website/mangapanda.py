@@ -25,20 +25,19 @@ def get_manga_list():
 
     name_wise_list=soup.find_all('ul',class_='series_alpha')
 
-    for li in name_wise_list:
-        manga_name,manga_loc = li.a.string, li.a['href']
-        a[manga_name]=manga_loc
+    for ul in name_wise_list:
+        item=ul.find_all("li")
+        for li in item:
+            manga_name,manga_loc = li.a.string, li.a['href']
+            manga_list[manga_name]=manga_loc
     return manga_list
 
 def get_chapter_count(chapter_list_location):
     soup = BeautifulSoup( WebResponse( chapter_list_location ).page )
     lis = soup.find_all('div', class_='chico_manga')
-    return len(lis) - 6
+    count=len(lis)
 
-
-
-
-
-
-
-
+    if count > 12:
+        return count - 6
+    else:
+        return count/2
