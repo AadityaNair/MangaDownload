@@ -1,0 +1,11 @@
+language: python
+python:
+    - "2.7"
+    - "2.6"
+install:
+    - pip install beautifulsoup4
+    - pip install fuzzywuzzy
+    - pip install argparse
+script:
+    - python run_tests.py
+
