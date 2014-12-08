@@ -52,3 +52,7 @@ The script works thru command-line options:
  ```sh
     python manga.py [manga_name] -c [CHAPTER]
  ``` 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/AadityaNair/mangadownload/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
