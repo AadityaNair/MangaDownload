@@ -8,11 +8,10 @@
 
 def init():
     global manga, user_details
+    user_details={}
 
     manga = None  # Supposed to hold the Manga Object.
-    user_details = {
-            manga_name: None,
-            location: None,
-            begin: 0,
-            end: 0
-    }
+    user_details['manga_name']= None
+    user_details['location']= None
+    user_details['begin']= 0
+    user_details['end']= 0

@@ -7,7 +7,8 @@
 """
 
 import argparse
-from . import globals
+import globals
+globals.init()
 
 def create_parser():
     """
@@ -43,12 +44,12 @@ def create_parser():
             )
 
     return parser
-def parse_input():
+def parse_input(argument):
     parser=create_parser()
-    args=parser.parse_args()
+    args=parser.parse_args(argument)
     if args.chapter and (args.begin or args.end):
         print '--chapter cannot be specified with --begin/--end. \n'
-        parser.parse_args('--help'.split())
+        return parser.parse_args('--help'.split())
     else:
 # Make all inputs available globally
         globals.user_details['manga_name'] = args.manga_name
