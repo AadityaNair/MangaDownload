@@ -9,5 +9,5 @@
 # Stub to test Travis CI
 
 def stub():
-    exit(-1)
+    raise AssertionError
 stub()
