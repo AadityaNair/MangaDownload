@@ -9,5 +9,5 @@
 # Stub to test Travis CI
 
 def stub():
-    return True
+    exit(-1)
 stub()
