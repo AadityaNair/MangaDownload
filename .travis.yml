@@ -7,5 +7,7 @@ install:
     - pip install fuzzywuzzy
     - pip install argparse
 script:
-    - python run_tests.py
+    - cd ./tests/
+    - nosetests -v
+
 
