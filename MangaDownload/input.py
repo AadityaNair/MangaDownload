@@ -8,7 +8,6 @@
 
 import argparse
 import globals
-globals.init()
 
 def create_parser():
     """
