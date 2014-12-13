@@ -6,6 +6,7 @@
     Website Parser Module for MangaPanda
 """
 from webpage import WebResponse
+manga_list={}
 
 try:
     from bs4 import BeautifulSoup
@@ -18,8 +19,6 @@ except ImportError:
 
 
 def get_manga_list():
-    manga_list={}
-
     res=WebResponse("http://www.mangapanda.com/alphabetical")
     soup=BeautifulSoup(res.page)
 
@@ -41,3 +40,11 @@ def get_chapter_count(chapter_list_location):
         return count - 6
     else:
         return count/2
+
+def absoulute_location(manga_name):
+    """
+    Returns the absolute list location for the manga.
+    Assumes that the manga name is in the `manga_list`.
+    """
+    assert( manga_name in manga_list.keys() )
+    return "http://www.mangapanda.com" + manga_list[manga_name]
