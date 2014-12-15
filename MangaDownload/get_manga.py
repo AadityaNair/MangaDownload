@@ -27,11 +27,11 @@ def ask_best_match(matches):
     If `matches` contains only one element that element is returned.
     If it contains no elements, it exits with  status -2.
     """
-    if( len( matches ) == 0 )
+    if len( matches ) == 0:
         print "No Manga matches the given name."
         exit(-2)
 
-    if( len( matches ) == 1 )
+    if len( matches ) == 1:
         return matches[0]
 # TODO Complete user input for multiple matches
     
@@ -43,7 +43,7 @@ def get_best_match_location(manga_name, choices):
     """
     
     matches=process.extractBests(manga_name, choices, limit=10, score_cutoff=100)
-    if( len(matches) == 0 ):
+    if len(matches) == 0:
         matches=process.extractBests(manga_name, choices, limit=10, score_cutoff=80)
 
     match=ask_best_match(matches)
