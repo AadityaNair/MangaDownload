@@ -73,3 +73,55 @@ def get_page_count(page_in_chapter):
     partial_list = soup.body.find(id='pageMenu').children
     page_count = len(list(partial_list)) / 2
     return page_count
+
+
+def get_and_save_image(page, name):
+    soup = BeautifulSoup(page)
+    img_url = soup.body.img['src']
+
+    image = WebResponse(img_url).page
+    extn = img_url[img_url.rfind('.'):]
+    image_name = name + str(extn)
+
+    f = open(image_name, 'wb')
+    f.write(image.page)
+    f.close()
+
+
+def MangaIterator(chapter_list_location, begin, end):
+    """
+    Returns an Iterator to each page in the chapter.
+    """
+
+    chapter_count = get_chapter_count(chapter_list_location)
+    if begin is None:
+        begin = 1
+    if end is None:
+        end = chapter_count
+    assert begin <= chapter_count <= end
+
+    import re
+    # Assumed that the prefix for chapters is found on list location
+    regex = '^http://www.mangapanda.com/\w*/(.*)\.html$'
+    reg = re.compile(regex)
+    match = reg.match(chapter_list_location)
+
+    prefix = match.group(1)
+
+    # url will be of the form http://www.mangapanda.com/prefix/chapter_no/page_no
+
+    manga_base_url = "http://www.mangapanda.com/" + prefix + '/'
+    chapter_no = begin
+
+    while begin <= chapter_no <= end:
+        chapter_base_url = manga_base_url + str(chapter_no) + '/'
+        number_of_pages = get_page_count(chapter_base_url)
+
+        assert number_of_pages is not None
+
+        page=1
+        while page <= number_of_pages:
+            page_url = chapter_base_url + str(page)
+            yield page_url
+            page += 1
+        chapter_no += 1
